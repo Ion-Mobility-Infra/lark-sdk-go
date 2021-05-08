@@ -9,3 +9,5 @@ Open source LarkSuite golang SDK
 # destination directory of generated golang structs: model
 go run cmd/generate.go
 ```
+
+This command can be run again whenever we update our `sample` directory with new json files.
