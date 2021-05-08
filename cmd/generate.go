@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -11,22 +10,25 @@ import (
 )
 
 func main() {
-	// cat $FILE | sanctify -p model -t $filename > $output
-	fmt.Println("generate")
-
 	// grab all files
 	path, err := os.Getwd()
 	if err != nil {
 		log.Fatal(err)
 	}
-	path = filepath.Join(path, "sample")
-	files, err := ioutil.ReadDir(path)
+	srcDirName := "sample"
+	srcDir := filepath.Join(path, srcDirName)
+
+	destDirName := "model"
+	destDir := filepath.Join(path, destDirName)
+
+	files, err := ioutil.ReadDir(srcDir)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	for _, f := range files {
-		wrapsanctify.HandleCommandLine(f, path)
+		// cat $FILE | sanctify -p model -t $filename > $output
+		wrapsanctify.HandleFromCommandLine(f, srcDir, destDir)
 	}
 
 }

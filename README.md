@@ -2,8 +2,10 @@
 
 Open source LarkSuite golang SDK
 
-## Set up
+## Generate go struct
 
 ```bash
-go get -u github.com/bashtian/jsonutils/cmd/jsonutil
+# source directory of json files: sample
+# destination directory of generated golang structs: model
+go run cmd/generate.go
 ```

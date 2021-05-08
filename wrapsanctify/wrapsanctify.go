@@ -4,24 +4,24 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
 )
 
-func HandleCommandLine(f os.FileInfo, path string) {
+func HandleFromCommandLine(f os.FileInfo, srcDir string, destDir string) {
 	basename := f.Name()
 	name := strings.TrimSuffix(basename, filepath.Ext(basename))
-	// output := name + ".go"
+	destFilename := name + ".go"
 
-	// cmd := exec.Command("cat", basename, "|", "sanctify", "-p", "model", "-t", basename, ">", output)
+	// cat json file
 	catCmd := exec.Command("cat", basename)
-	catCmd.Dir = path
-	// sanctifyCmd := exec.Command("sanctify", "-p", "model", "-t", basename, ">", output)
-	sanctifyCmd := exec.Command("sanctify", "-p", "model", "-t", name)
-	// sanctifyCmd := exec.Command("wc")
-	sanctifyCmd.Dir = path
+	catCmd.Dir = srcDir
+	// sanctify json to go struct
+	sanctifyCmd := exec.Command("sanctify", "-p", "model", "-t", underscoreToCamelCase(name))
+	sanctifyCmd.Dir = srcDir
 
 	// make a pipe
 	reader, writer := io.Pipe()
@@ -48,7 +48,20 @@ func HandleCommandLine(f os.FileInfo, path string) {
 	sanctifyCmd.Wait()
 	reader.Close()
 
-	io.Copy(os.Stdout, &buf)
+	dest := filepath.Join(destDir, destFilename)
+	writeBuffer(dest, buf)
+}
 
-	fmt.Println(&buf)
+func writeBuffer(dest string, buf bytes.Buffer) error {
+	fmt.Println("Writing to: ", dest)
+	return ioutil.WriteFile(dest, buf.Bytes(), 0644)
+}
+
+func underscoreToCamelCase(underscore_name string) string {
+	strList := strings.Split(underscore_name, "_")
+	var CamelCaseNameList []string
+	for _, str := range strList {
+		CamelCaseNameList = append(CamelCaseNameList, strings.Title(str))
+	}
+	return strings.Join(CamelCaseNameList, "")
 }
