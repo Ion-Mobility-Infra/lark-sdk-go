@@ -30,7 +30,9 @@ func main() {
 	fmt.Println(chatIDs)
 
 	// This API call to send a text message requires the tenant access token
-	sendTextResp := client.SendTextMessage(chatIDs[0], "Hello there")
-	fmt.Println(sendTextResp)
+	for _, chatID := range chatIDs {
+		sendTextResp := client.SendTextMessage(chatID, "Hello there, this is a test message from R2-D2.\nI am built with an open source lark-go-sdk on https://github.com/Ion-Mobility-Infra/lark-sdk-go")
+		fmt.Println(sendTextResp)
+	}
 
 }
