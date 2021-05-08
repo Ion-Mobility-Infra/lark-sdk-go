@@ -12,7 +12,7 @@ go run cmd/generate.go
 
 This command can be run again whenever we update our `sample` directory with new json files.
 
-## Running Examples
+## Running our Example
 
 ```bash
 # load environment variables used to call LarkSuite APIs
