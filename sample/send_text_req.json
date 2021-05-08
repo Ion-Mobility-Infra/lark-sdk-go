@@ -1,0 +1,11 @@
+{
+  "open_id": "ou_5ad573a6411d72b8305fda3a9c15c70e",
+  "root_id": "om_40eb06e7b84dc71c03e009ad3c754195",
+  "chat_id": "oc_5ad11d72b830411d72b836c20",
+  "user_id": "92e39a99",
+  "email": "test@gmail.com",
+  "msg_type": "text",
+  "content": {
+    "text": "test content<at user_id=\"ou_88a56e7e8e9f680b682f6905cc09098e\"></at>"
+  }
+}

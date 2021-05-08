@@ -1,0 +1,26 @@
+{
+  "code": 0,
+  "msg": "ok",
+  "data": {
+    "has_more": true,
+    "page_token": "6631829734835617796",
+    "groups": [
+      {
+        "avatar": "http://p2.pstatp.com/origin/78c100066939cf1374f1",
+        "chat_id": "oc_41e7bdf4877cfc316136f4ccf6c32613",
+        "description": "description 1",
+        "name": "group 1",
+        "owner_open_id": "ou_f407fcf504d40eac629a91740b4c8ce0",
+        "owner_user_id": "deb1gcc7"
+      },
+      {
+        "avatar": "http://p2.pstatp.com/origin/78bb00136a55b07eac95",
+        "chat_id": "oc_e7081e51485dce75d6262ceede7a77b8",
+        "description": "description 2",
+        "name": "group 2",
+        "owner_open_id": "ou_50c7e1b638610b781511fadf97118e4a",
+        "owner_user_id": "5543fe1d"
+      }
+    ]
+  }
+}
