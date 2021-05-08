@@ -1,0 +1,11 @@
+{
+  "access_token": "ACCESSTOKEN",
+  "avatar_url": "AVATARRUL",
+  "expires_in": 1572849898,
+  "name": "NAME",
+  "en_name": "ENGLISH NAME",
+  "open_id": "OPENID",
+  "tenant_key": "TENANTKEY",
+  "refresh_token": "REFRESHTOKEN",
+  "token_type": "Bearer"
+}
