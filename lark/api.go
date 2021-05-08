@@ -25,6 +25,9 @@ const POST_USER_ACCESS_TOKEN = "/authen/v1/access_token"
 // Group List for Bot
 const GET_GROUP_LIST = "/chat/v4/list"
 
+// Send Message
+const SEND_TEST_MESSAGE = "/message/v4/send"
+
 // Client represents a client instance of app configuration
 // that interacts with Lark Open APIs
 type Client struct {
@@ -113,6 +116,24 @@ func (c *Client) ObtainBotGroupList() *model.GroupListBotRes {
 	return &res
 }
 
+func (c *Client) SendTextMessage(chatID string, content string) *model.SendTextRes {
+	req := structToMap(model.SendTextReq{
+		ChatID:  chatID,
+		MsgType: "text",
+		Content: struct {
+			Text string "json:\"text\""
+		}{Text: content}})
+	url := LARKSUITE_OPEN_API + SEND_TEST_MESSAGE
+
+	jsonData, _ := json.Marshal(req)
+	jsonBytes := bytes.NewBuffer(jsonData)
+	body := postWithToken(url, c.tenantAccessToken, jsonBytes)
+
+	var res model.SendTextRes
+	json.Unmarshal(body, &res)
+	return &res
+}
+
 func (c *Client) ObtainUserAccessToken(code string) *model.UserAccessTokenRes {
 	req := structToMap(model.UserAccessTokenReq{
 		Code:           code,
@@ -134,6 +155,29 @@ func post(req interface{}, url string) (body []byte) {
 	jsonBytes := bytes.NewBuffer(jsonData)
 
 	resp, err := http.Post(url, "application/json", jsonBytes)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer resp.Body.Close()
+
+	// response
+	body, _ = ioutil.ReadAll(resp.Body)
+	return body
+}
+
+func postWithToken(url string, token string, jsonBytes *bytes.Buffer) (body []byte) {
+	// Create a Bearer string by appending string access token
+	var bearer = "Bearer " + token
+
+	// Create a new request using http
+	req, err := http.NewRequest("POST", url, jsonBytes)
+
+	// add authorization header to the req
+	req.Header.Add("Authorization", bearer)
+
+	// Send req using http Client
+	client := &http.Client{}
+	resp, err := client.Do(req)
 	if err != nil {
 		log.Fatal(err)
 	}

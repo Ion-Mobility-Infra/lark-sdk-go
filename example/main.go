@@ -7,20 +7,30 @@ import (
 )
 
 func main() {
-	fmt.Println("Example API call to LarkSuite API")
+	fmt.Println("Example API calls to LarkSuite API")
 
-	result := lark.NewClient(true).
+	// Instantiate a lark API client and
+	// obtain our app access token, and
+	// obtain our tenant access token
+	client := lark.NewClient(true).
 		ObtainAppAccessToken().
-		ObtainTenantAccessToken().
-		ObtainBotGroupList()
+		ObtainTenantAccessToken()
+
+	// This API call to retrieve a list of groups that the bot belongs in
+	// requires the app access token
+	groupList := client.ObtainBotGroupList()
 
 	var chatIDs []string
-	if len(result.Data.Groups) > 0 {
-		for _, group := range result.Data.Groups {
+	if len(groupList.Data.Groups) > 0 {
+		for _, group := range groupList.Data.Groups {
 			chatIDs = append(chatIDs, group.ChatID)
 		}
 	}
 
 	fmt.Println(chatIDs)
+
+	// This API call to send a text message requires the tenant access token
+	sendTextResp := client.SendTextMessage(chatIDs[0], "Hello there")
+	fmt.Println(sendTextResp)
 
 }
