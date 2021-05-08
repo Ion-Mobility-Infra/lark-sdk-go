@@ -22,15 +22,19 @@ const POST_TENANT_ACCESS_TOKEN_INTERNAL = "/auth/v3/tenant_access_token/internal
 // URLS for user access token
 const POST_USER_ACCESS_TOKEN = "/authen/v1/access_token"
 
+// Group List for Bot
+const GET_GROUP_LIST = "/chat/v4/list"
+
 // Client represents a client instance of app configuration
 // that interacts with Lark Open APIs
 type Client struct {
-	appID          string
-	appSecret      string
-	appTicket      string
-	internal       bool
-	appAccessToken string // set after an ObtainAppAccessToken call is made
-	code           int    // set atfter an ObtainAppAccessToken call is made
+	appID             string
+	appSecret         string
+	appTicket         string
+	internal          bool
+	appAccessToken    string // set after an ObtainAppAccessToken call is made
+	code              int    // set after an ObtainAppAccessToken call is made
+	tenantAccessToken string // set after an ObtainTenantAccessTokeb call is made
 }
 
 func NewClient(internal bool) *Client {
@@ -84,6 +88,31 @@ func (c *Client) ObtainAppAccessToken() *Client {
 	return c
 }
 
+func (c *Client) ObtainTenantAccessToken() *Client {
+	req := structToMap(model.TenantAccessTokenReq{
+		AppID:     c.appID,
+		AppSecret: c.appSecret,
+	})
+	url := LARKSUITE_OPEN_API + POST_TENANT_ACCESS_TOKEN_INTERNAL
+
+	body := post(req, url)
+
+	var res model.TenantAccessTokenRes
+	json.Unmarshal(body, &res)
+	c.tenantAccessToken = res.TenantAccessToken
+	c.code = res.Code
+	return c
+}
+
+func (c *Client) ObtainBotGroupList() *model.GroupListBotRes {
+	url := LARKSUITE_OPEN_API + GET_GROUP_LIST
+	body := get(url, c.appAccessToken)
+
+	var res model.GroupListBotRes
+	json.Unmarshal(body, &res)
+	return &res
+}
+
 func (c *Client) ObtainUserAccessToken(code string) *model.UserAccessTokenRes {
 	req := structToMap(model.UserAccessTokenReq{
 		Code:           code,
@@ -105,6 +134,29 @@ func post(req interface{}, url string) (body []byte) {
 	jsonBytes := bytes.NewBuffer(jsonData)
 
 	resp, err := http.Post(url, "application/json", jsonBytes)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer resp.Body.Close()
+
+	// response
+	body, _ = ioutil.ReadAll(resp.Body)
+	return body
+}
+
+func get(url string, accessToken string) (body []byte) {
+	// Create a Bearer string by appending string access token
+	var bearer = "Bearer " + accessToken
+
+	// Create a new request using http
+	req, err := http.NewRequest("GET", url, nil)
+
+	// add authorization header to the req
+	req.Header.Add("Authorization", bearer)
+
+	// Send req using http Client
+	client := &http.Client{}
+	resp, err := client.Do(req)
 	if err != nil {
 		log.Fatal(err)
 	}
